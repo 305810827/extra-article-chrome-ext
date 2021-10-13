@@ -50,12 +50,11 @@ function removeMask() {
 
 function confirm(e) {
     e.stopPropagation();
-    console.log('confirm')
     let dpr = devicePixelRatio || 1;
     let elx = targetEL().getBoundingClientRect().x
-    console.log(elx,dpr)
-    clippingImage(base64Image, (pos.x-elx) * dpr, (pos.y+60) * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
-        window.postMessage({cmd:'receiveFromContentScript',base64Result},'*')
+    let ely = targetEL().getBoundingClientRect().y
+    clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
+        // window.postMessage({cmd:'receiveFromContentScript',base64Result},'*')
         localStorage.setItem('imageBase64',base64Result)
         // const blobInput = convertBase64ToBlob(base64Result,'image/png')
         // const data = [new ClipboardItem({['image/png']:blobInput})];
@@ -74,17 +73,17 @@ function close(e) {
 }
 
 function startCapture(e) {
-    console.log('startCapture')
     pos.x = e.offsetX;
     pos.y = e.offsetY;
+    container.style.top = pos.y + 'px';
+    container.style.left = pos.x + 'px';
     container.style.width = '0';
     container.style.height = '0';
-    document.addEventListener('mousemove', isMoving)
+    mask.addEventListener('mousemove', isMoving)
 }
 
 function endCapture() {
-    console.log('endCapture')
-    document.removeEventListener('mousemove', isMoving)
+    mask.removeEventListener('mousemove', isMoving)
     mask.removeEventListener('mousedown', startCapture)
     mask.style.cursor = 'default'
     tools.classList.add('show')
@@ -93,12 +92,19 @@ function endCapture() {
 function isMoving(e) {
     let timer;
     if (timer) return;
-    mask.style.cursor = 'crosshair'
     timer = setTimeout(() => {
-        container.style.top = pos.y + 'px';
-        container.style.left = pos.x + 'px';
-        elWidth = e.offsetX - pos.x;
-        elHeight = e.offsetY - pos.y;
+        // container.style.top = pos.y + 'px';
+        // container.style.left = pos.x + 'px';
+        if(e.offsetX < pos.x){
+            elWidth = e.offsetX
+        }else {
+            elWidth = e.offsetX - pos.x;
+        }
+        if(e.offsetY < pos.y){
+            elHeight = e.offsetY
+        }else {
+            elHeight = e.offsetY - pos.y;
+        }
         container.style.width = elWidth + 'px';
         container.style.height = elHeight + 'px';
         timer = undefined;
