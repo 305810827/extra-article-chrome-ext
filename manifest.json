@@ -21,8 +21,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content_script.js"],
-      "css": ["./css/inject.css","./css/font.css"],
+      "js": ["./utils/sha-256.js","./utils/http.js","./api/ocr.js","message.js","content_script.js"],
+      "css": ["./css/inject.css","./css/font.css","./css/message.css"],
       "run_at": "document_start"
     }
   ],

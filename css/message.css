@@ -1,0 +1,25 @@
+div.x-success-message {
+    color         : #67c23a;
+    padding       : 10px;
+    background    : #f0f9eb;
+    border        : 1px solid #e1f3d8;
+    border-radius : 4px;
+    position      : absolute;
+    top           : 0;
+    left          : 50%;
+    transform     : translateX(-50%);
+    animation  : trace 3s ease-in-out;
+}
+
+div.x-success-message > span{
+    margin: 0 .5em;
+}
+
+@keyframes trace {
+    from {
+        opacity : 1;
+    }
+    to {
+        opacity : 0;
+    }
+}

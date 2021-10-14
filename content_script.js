@@ -9,6 +9,7 @@ let container   = createEl();
 let tools       = createEl();
 let closeBtn    = createEl('span')
 let confirmBtn  = createEl('span')
+let ocrBtn      = createEl('span')
 let pos         = {x: 0, y: 0}
 let elWidth, elHeight
 let base64Image
@@ -20,6 +21,7 @@ function init(){
     tools       = createEl();
     closeBtn    = createEl('span')
     confirmBtn  = createEl('span')
+    ocrBtn      = createEl('span')
     pos         = {x: 0, y: 0}
     elWidth     = 0;
     elHeight    = 0;
@@ -32,10 +34,16 @@ function addMask() {
     tools.classList.add('x-tools')
     closeBtn.classList.add('iconfont', 'icon-x-close')
     confirmBtn.classList.add('iconfont', 'icon-x-right')
+    ocrBtn.classList.add('iconfont','icon-x-ocr')
+    closeBtn.title     = '取消'
+    confirmBtn.title   = '确定'
+    ocrBtn.title       = 'OCR识别'
     closeBtn.addEventListener('click', close)
     confirmBtn.addEventListener('click', confirm)
+    ocrBtn.addEventListener('click',ocr)
 
     tools.appendChild(closeBtn)
+    tools.appendChild(ocrBtn)
     tools.appendChild(confirmBtn)
     container.appendChild(tools);
     mask.appendChild(container);
@@ -72,6 +80,66 @@ function close(e) {
     removeMask()
 }
 
+function ocr(e) {
+    e.stopPropagation();
+    let dpr = devicePixelRatio || 1;
+    let elx = targetEL().getBoundingClientRect().x
+    let ely = targetEL().getBoundingClientRect().y
+    clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, async base64Result => {
+        const res = await getOcrData({
+            file_base64: base64Result,
+            file_name  : `img${Math.random().toString().substr(2, 6)}`
+        })
+        console.log(res)
+        mask.removeChild(container)
+        addOcrDataToPage(res.value)
+    })
+}
+
+function addOcrDataToPage(data){
+    if(!data.length)return;
+    let ocrBox = createEl()
+    let ocrList = createEl('ul')
+    let ocrTools = createEl()
+    let closeBtn = createEl('span')
+    let copyAllBtn = createEl('span')
+    let input = createEl('input')
+
+    ocrBox.classList.add('x-ocrBox')
+    ocrTools.classList.add('x-ocrTool')
+    ocrBox.style.top = pos.y + 'px'
+    ocrBox.style.left = pos.x + 'px'
+    ocrTools.style.top = '-2px';
+    ocrTools.style.right = '-23px';
+    for (let item of data) {
+        input.value += item
+        let li = createEl('li')
+        li.innerText = item
+        ocrList.appendChild(li)
+    }
+
+    closeBtn.title = '关闭'
+    copyAllBtn.title = '复制全部'
+    closeBtn.classList.add('iconfont', 'icon-x-close')
+    copyAllBtn.classList.add('iconfont','icon-x-copy')
+    input.classList.add('x-myInput')
+    closeBtn.addEventListener('click',close)
+    copyAllBtn.addEventListener('click',copyAll)
+
+    ocrTools.appendChild(closeBtn)
+    ocrTools.appendChild(copyAllBtn)
+    ocrBox.appendChild(ocrList)
+    ocrBox.appendChild(ocrTools)
+    ocrBox.appendChild(input)
+    mask.appendChild(ocrBox)
+}
+
+function copyAll(){
+    let input = document.querySelector('input.x-myInput')
+    input && input.select()
+    document.execCommand('copy') && message('复制成功')
+}
+
 function startCapture(e) {
     pos.x = e.offsetX;
     pos.y = e.offsetY;
@@ -93,8 +161,6 @@ function isMoving(e) {
     let timer;
     if (timer) return;
     timer = setTimeout(() => {
-        // container.style.top = pos.y + 'px';
-        // container.style.left = pos.x + 'px';
         if(e.offsetX < pos.x){
             elWidth = e.offsetX
         }else {
