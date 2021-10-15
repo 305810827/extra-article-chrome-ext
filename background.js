@@ -35,16 +35,3 @@ chrome.action.onClicked.addListener(() => captureFull((base64Codes) => {
 //         })
 //     }
 // });
-// chrome.webRequest.onBeforeRequest.addListener((details)=>{
-//     console.log(details)
-// },{urls: ["*://*/*"], types: ["script"]},['requestBody'])
-// // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-// //     chrome.tabs.captureVisibleTab(null, {}, function (base64Codes) {
-// //         sendResponse(base64Codes)
-// //     })
-// // })
-// chrome.devtools.network.onRequestFinished.addListener(request => {
-//     request.getContent((body) => {
-//         console.log(body)
-//     });
-// });

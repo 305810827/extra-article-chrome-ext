@@ -62,15 +62,15 @@ function confirm(e) {
     let elx = targetEL().getBoundingClientRect().x
     let ely = targetEL().getBoundingClientRect().y
     clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
-        // window.postMessage({cmd:'receiveFromContentScript',base64Result},'*')
         localStorage.setItem('imageBase64',base64Result)
-        // const blobInput = convertBase64ToBlob(base64Result,'image/png')
-        // const data = [new ClipboardItem({['image/png']:blobInput})];
-        // navigator.clipboard.write(data).then(() => {
-        //     console.log('success')
-        // }, (err) => {
-        //     console.log('failed')
-        // })
+        const blobInput = convertBase64ToBlob(base64Result,'image/png')
+        const data      = [new ClipboardItem({['image/png']:blobInput})];
+        const clipboard = navigator.clipboard;
+        clipboard && clipboard.write(data).then(() => {
+            console.log('success')
+        }, (err) => {
+            console.log('failed')
+        })
     })
     removeMask()
 }
@@ -90,7 +90,6 @@ function ocr(e) {
             file_base64: base64Result,
             file_name  : `img${Math.random().toString().substr(2, 6)}`
         })
-        console.log(res)
         mask.removeChild(container)
         addOcrDataToPage(res.value)
     })

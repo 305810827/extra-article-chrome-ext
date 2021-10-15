@@ -3,7 +3,7 @@ async function getOcrData({file_base64, file_name}={}) {
         data: {
             type   : 'common_ocr',
             param  : {
-                'staffname'  : 'v_xiasyxia',
+                'staffname'  : 'wanted_order',
                 'file_name'  : file_name,
                 'file_base64': file_base64.replace(/^data:image\/\w+;base64,/, "")   //去掉base64位头部
             }
