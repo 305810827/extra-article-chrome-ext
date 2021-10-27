@@ -223,8 +223,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 let iframe   = createEl('iframe');
 let id       = parseInt(location.search.replace(/\?src_id=/g,''));
 let url      = location.origin + location.pathname;
-// iframe.src   = `https://wanted-order.woa.com:8080/record/sidewall?id=${id}&url=${url}`;
-iframe.src   = `https://192.168.255.10:8080/record/sidewall?id=${id}&url=${url}`;    //测试环境
+iframe.src   = `https://wanted-order.woa.com:8080/record/sidewall?id=${id}&url=${url}`;
+// iframe.src   = `https://192.168.255.10:8080/record/sidewall?id=${id}&url=${url}`;    //测试环境
 iframe.allow = "clipboard-read; clipboard-write";
 iframe.classList.add('x-iframe');
 // iframe.sandbox ="allow-same-origin;"
