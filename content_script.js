@@ -63,14 +63,19 @@ function confirm(e) {
     let ely = targetEL().getBoundingClientRect().y
     clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
         localStorage.setItem('imageBase64',base64Result)
+        for (let i = 0; i < window.frames.length; i++) {
+            window.frames[i].postMessage({cmd: 'pasteImage', base64Result}, '*')
+        }
         const blobInput = convertBase64ToBlob(base64Result,'image/png')
-        const data      = [new ClipboardItem({['image/png']:blobInput})];
         const clipboard = navigator.clipboard;
-        clipboard && clipboard.write(data).then(() => {
-            console.log('success')
-        }, (err) => {
-            console.log('failed')
-        })
+        if(clipboard){
+            const data      = [new ClipboardItem({['image/png']:blobInput})];
+            clipboard.write(data).then(() => {
+                console.log('success')
+            }, (err) => {
+                console.log('failed')
+            })
+        }
     })
     removeMask()
 }
@@ -218,7 +223,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 let iframe   = createEl('iframe');
 let id       = parseInt(location.search.replace(/\?src_id=/g,''));
 let url      = location.origin + location.pathname;
-iframe.src   = `https://wanted-order.woa.com:8080/record/sidewall?id=${id}&url=${url}`;
+// iframe.src   = `https://wanted-order.woa.com:8080/record/sidewall?id=${id}&url=${url}`;
+iframe.src   = `https://192.168.255.10:8080/record/sidewall?id=${id}&url=${url}`;    //测试环境
 iframe.allow = "clipboard-read; clipboard-write";
 iframe.classList.add('x-iframe');
 // iframe.sandbox ="allow-same-origin;"
