@@ -214,6 +214,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     sendResponse('收到了background.js的消息~')
 });
+
+let iframe   = createEl('iframe');
+let id       = parseInt(location.search.replace(/\?src_id=/g,''));
+let url      = location.origin + location.pathname;
+iframe.src   = `https://192.168.255.10:8080/record/sidewall?id=${id}&url=${url}`;
+iframe.allow = "clipboard-read; clipboard-write";
+iframe.classList.add('x-iframe');
+// iframe.sandbox ="allow-same-origin;"
+
+if(id){
+    document.body.style.paddingRight = '300px'
+    document.querySelector("html").appendChild(iframe)
+}
 // setTimeout(()=>{
 //     window.postMessage({content:'content_script'},'*')
 // },3000)
