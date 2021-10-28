@@ -221,8 +221,8 @@ function clippingImage(base64Codes, x, y, width, height, callback) {
 let iframe   = createEl('iframe');
 let id       = (location.search.indexOf('wanted_order_src_id')>-1) && parseInt(location.search.replace(/\?wanted_order_src_id=/g,''));
 let url      = location.origin + location.pathname;
-iframe.src   = `https://wanted-order.woa.com:8080/record/sidewall?id=${id}&url=${url}`;
-// iframe.src   = `https://192.168.255.10:8080/record/sidewall?id=${id}&url=${url}`;    //测试环境
+iframe.src   = `https://wanted-order.woa.com:8080/record?id=${id}&url=${url}`;
+// iframe.src   = `https://192.168.255.10:8080/record?id=${id}&url=${url}`;    //测试环境
 iframe.allow = "clipboard-read; clipboard-write";
 iframe.classList.add('x-iframe');
 // iframe.sandbox ="allow-same-origin;"
