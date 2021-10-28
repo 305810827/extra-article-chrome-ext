@@ -1,14 +1,23 @@
-function message(text) {
+function message(type='success',text) {
     let messageBox = createEl()
     let tag = createEl('span')
     let txt = createEl('span')
-    tag.classList.add('iconfont', 'icon-x-correct')
     txt.innerText = text
-    messageBox.classList.add('x-success-message')
+    messageBox.id = 'xs-message'
+    if(type === 'success'){
+        tag.classList.add('iconfont', 'icon-xs-correct')
+        messageBox.classList.add('x-success-message')
+    }else if(type === 'error'){
+        tag.classList.add('iconfont', 'icon-xs-error')
+        messageBox.classList.add('x-error-message')
+    }else if (type === 'warning'){
+        tag.classList.add('iconfont', 'icon-xs-warning')
+        messageBox.classList.add('x-warning-message')
+    }
     messageBox.appendChild(tag)
     messageBox.appendChild(txt)
-    mask.appendChild(messageBox)
+    targetEL().appendChild(messageBox)
     setTimeout(() => {
-        mask.removeChild(messageBox)
-    }, 3000)
+        targetEL().removeChild(messageBox)
+    }, 4000)
 }
