@@ -1,4 +1,6 @@
-async function getOcrData({file_base64, file_name}={}) {
+import http from "./http.js";
+
+export default async function getOcrData({file_base64, file_name}={}) {
     let request = {
         data: {
             type   : 'common_ocr',

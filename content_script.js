@@ -4,6 +4,7 @@ function createEl(tagName = 'div') {
     return document.createElement(tagName)
 }
 
+let port        = chrome.runtime.connect('',{name:'ocr'})
 let mask        = createEl();
 let container   = createEl();
 let tools       = createEl();
@@ -54,6 +55,7 @@ function addMask() {
 
 function removeMask() {
     targetEL().removeChild(document.querySelector('div.x-mask'))
+    removeTags()
 }
 
 function confirm(e) {
@@ -90,15 +92,21 @@ function ocr(e) {
     let dpr = devicePixelRatio || 1;
     let elx = targetEL().getBoundingClientRect().x
     let ely = targetEL().getBoundingClientRect().y
-    clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, async base64Result => {
-        const res = await getOcrData({
-            file_base64: base64Result,
-            file_name  : `img${Math.random().toString().substr(2, 6)}`
-        })
-        mask.removeChild(container)
-        addOcrDataToPage(res.value)
+    clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
+        // const res = await getOcrData({
+        //     file_base64: base64Result,
+        //     file_name  : `img${Math.random().toString().substr(2, 6)}`
+        // })
+        port.postMessage({cmd: 'getOcrData', base64Result})
     })
 }
+
+port.onMessage.addListener(msg => {
+    if(msg.cmd === 'getOcrData'){
+        mask.removeChild(container)
+        msg.data && addOcrDataToPage(msg.data.value)
+    }
+})
 
 function addOcrDataToPage(data){
     if(!data.length)return;
@@ -141,7 +149,7 @@ function addOcrDataToPage(data){
 function copyAll(){
     let input = document.querySelector('input.x-myInput')
     input && input.select()
-    document.execCommand('copy') && message('复制成功')
+    document.execCommand('copy') && message('success','复制成功')
 }
 
 function startCapture(e) {
@@ -210,18 +218,8 @@ function clippingImage(base64Codes, x, y, width, height, callback) {
     }
 }
 
-// get background info
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.cmd === 'addMask') {
-        base64Image = request.base64Codes
-        init()
-        addMask()
-    }
-    sendResponse('收到了background.js的消息~')
-});
-
 let iframe   = createEl('iframe');
-let id       = parseInt(location.search.replace(/\?src_id=/g,''));
+let id       = (location.search.indexOf('wanted_order_src_id')>-1) && parseInt(location.search.replace(/\?wanted_order_src_id=/g,''));
 let url      = location.origin + location.pathname;
 iframe.src   = `https://wanted-order.woa.com:8080/record/sidewall?id=${id}&url=${url}`;
 // iframe.src   = `https://192.168.255.10:8080/record/sidewall?id=${id}&url=${url}`;    //测试环境
@@ -230,9 +228,29 @@ iframe.classList.add('x-iframe');
 // iframe.sandbox ="allow-same-origin;"
 
 if(id){
+    document.body.style.width = '100vw'
     document.body.style.paddingRight = '300px'
     document.querySelector("html").appendChild(iframe)
 }
+
+// get background info
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.cmd === 'addMask') {
+        base64Image = request.base64Codes
+        init()
+        addMask()
+        addAlwaysOnTopTag()
+    }
+    sendResponse('收到了background.js的消息~')
+});
+
+// 接收iframe传过来的信息
+window.addEventListener('message',(e)=>{
+    let data = e.data
+    if(data.cmd === 'notification'){
+        message(data.state,data.content)
+    }
+})
 // setTimeout(()=>{
 //     window.postMessage({content:'content_script'},'*')
 // },3000)
