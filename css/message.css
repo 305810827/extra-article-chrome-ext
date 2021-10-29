@@ -6,7 +6,7 @@ div#xs-message {
     left          : 40%;
     /*transform     : translateX(-50%);*/
     animation     : trace 4s ease-in-out;
-    z-index       : 999;
+    z-index       : 9999999;
 }
 
 div#xs-message  > span{
@@ -54,5 +54,5 @@ div.alwaysOnTop {
     left          : .5em;
     /*transform     : translateX(-50%);*/
     box-shadow    : rgba(0, 0, 0, 0.24) 0 3px 8px;
-    z-index       : 99;
+    z-index       : 9999999;
 }

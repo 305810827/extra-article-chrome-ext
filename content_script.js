@@ -218,19 +218,17 @@ function clippingImage(base64Codes, x, y, width, height, callback) {
     }
 }
 
-let iframe   = createEl('iframe');
-let id       = (location.search.indexOf('wanted_order_src_id')>-1) && parseInt(location.search.replace(/\?wanted_order_src_id=/g,''));
-let url      = location.origin + location.pathname;
-iframe.src   = `https://wanted-order.woa.com:8080/record?id=${id}&url=${url}`;
-// iframe.src   = `https://192.168.255.10:8080/record?id=${id}&url=${url}`;    //测试环境
-iframe.allow = "clipboard-read; clipboard-write";
-iframe.classList.add('x-iframe');
-// iframe.sandbox ="allow-same-origin;"
-
-if(id){
-    document.body.style.width = '100vw'
-    document.body.style.paddingRight = '300px'
-    document.querySelector("html").appendChild(iframe)
+function addMyIframe(id){
+    if(!id) return;
+    let iframe   = createEl('iframe');
+    let url      = location.href;
+    // iframe.src   = `https://wanted-order.woa.com:8080/record?id=${id}&url=${url}`;
+    iframe.src   = `https://192.168.255.10:8080/record?id=${id}&url=${url}`;    //测试环境
+    iframe.allow = "clipboard-read;clipboard-write";
+    iframe.classList.add('x-iframe');
+    document.body.style.width        = '100vw';
+    document.body.style.paddingRight = '300px';
+    document.querySelector("html").appendChild(iframe);
 }
 
 // get background info
@@ -250,6 +248,15 @@ window.addEventListener('message',(e)=>{
     if(data.cmd === 'notification'){
         message(data.state,data.content)
     }
+    else if (data.cmd === 'wanted_order_src_id') {
+        addMyIframe(data.content)
+    }
+})
+
+window.addEventListener('DOMContentLoaded',()=>{
+    window.opener && window.opener.postMessage({
+        cmd:'DOMLoaded'
+    },'*')
 })
 // setTimeout(()=>{
 //     window.postMessage({content:'content_script'},'*')
