@@ -223,7 +223,7 @@ function addMyIframe(id){
     let iframe   = createEl('iframe');
     let url      = location.href;
     // iframe.src   = `https://wanted-order.woa.com:8080/record?id=${id}&url=${url}`;
-    iframe.src   = `https://192.168.255.10:8080/record?id=${id}&url=${url}`;    //测试环境
+    iframe.src   = `https://192.168.255.10:3002/record?id=${id}&url=${url}`;    //测试环境
     iframe.allow = "clipboard-read;clipboard-write";
     iframe.classList.add('x-iframe');
     document.body.style.width        = '100vw';
