@@ -61,9 +61,7 @@ function removeMask() {
 function confirm(e) {
     e.stopPropagation();
     let dpr = devicePixelRatio || 1;
-    let elx = targetEL().getBoundingClientRect().x
-    let ely = targetEL().getBoundingClientRect().y
-    clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
+    clippingImage(base64Image, pos.x * dpr, pos.y * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
         localStorage.setItem('imageBase64',base64Result)
         for (let i = 0; i < window.frames.length; i++) {
             window.frames[i].postMessage({cmd: 'pasteImage', base64Result}, '*')
@@ -90,9 +88,7 @@ function close(e) {
 function ocr(e) {
     e.stopPropagation();
     let dpr = devicePixelRatio || 1;
-    let elx = targetEL().getBoundingClientRect().x
-    let ely = targetEL().getBoundingClientRect().y
-    clippingImage(base64Image, (pos.x - elx) * dpr, (pos.y + ely) * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
+    clippingImage(base64Image, pos.x* dpr, pos.y * dpr, elWidth * dpr, elHeight * dpr, base64Result => {
         // const res = await getOcrData({
         //     file_base64: base64Result,
         //     file_name  : `img${Math.random().toString().substr(2, 6)}`
@@ -155,8 +151,8 @@ function copyAll(){
 function startCapture(e) {
     pos.x = e.offsetX;
     pos.y = e.offsetY;
-    container.style.top = pos.y + 'px';
-    container.style.left = pos.x + 'px';
+    container.style.top = e.offsetY + 'px';
+    container.style.left = e.offsetX + 'px';
     container.style.width = '0';
     container.style.height = '0';
     mask.addEventListener('mousemove', isMoving)
@@ -220,15 +216,36 @@ function clippingImage(base64Codes, x, y, width, height, callback) {
 
 function addMyIframe(id){
     if(!id) return;
-    let iframe   = createEl('iframe');
+    let div           = createEl()
+    let iframe        = createEl('iframe');
+    let foldLeftBtn   = createEl('span')
+    let foldRightBtn  = createEl('span')
     let url      = location.href;
     // iframe.src   = `https://wanted-order.woa.com:8080/record?id=${id}&url=${url}`;
-    iframe.src   = `https://9.134.32.20:3002/record?id=${id}&url=${url}`;    //测试环境
+    iframe.src   = `https://9.134.32.20:3003/record?id=${id}&url=${url}`;    //测试环境
+    // iframe.src   = `https://192.168.255.10:3002/record?id=${id}&url=${url}`;    //本地环境
     iframe.allow = "clipboard-read;clipboard-write";
     iframe.classList.add('x-iframe');
     document.body.style.width        = '100vw';
     document.body.style.paddingRight = '300px';
-    document.querySelector("html").appendChild(iframe);
+    div.classList.add('x-iframe')
+    foldLeftBtn.classList.add('iconfont','icon-x-fold-left')
+    foldRightBtn.classList.add('iconfont','icon-x-fold-right')
+    foldLeftBtn.addEventListener('click',() => {
+        div.style.width = '300px'
+        foldLeftBtn.style.display  = 'none'
+        foldRightBtn.style.display = 'block'
+    })
+    foldRightBtn.addEventListener('click',() => {
+        div.style.width = '0'
+        foldRightBtn.style.display = 'none'
+        foldLeftBtn.style.display  = 'block'
+    })
+    div.appendChild(iframe)
+    div.appendChild(foldLeftBtn)
+    div.appendChild(foldRightBtn)
+
+    document.querySelector("html").appendChild(div);
 }
 
 // get background info
