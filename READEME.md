@@ -1,1 +1,1 @@
-本插件截图存储在localstorage中，故获取截图须通过localstorage.getItem
+精确获取各种页面的正文

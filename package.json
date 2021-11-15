@@ -1,0 +1,28 @@
+{
+  "name": "extra-html-content",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service build --watch",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "xuyanjie",
+  "dependencies": {
+    "@vue/cli-plugin-babel": "^4.5.15",
+    "article-parser": "^4.2.10",
+    "htmlparser2": "^7.1.2",
+    "readabilitySAX": "^1.6.1",
+    "sanitize-html": "^2.5.2",
+    "vue": "^3.2.20"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "~4.5.0",
+    "copy-webpack-plugin": "^4.6.0"
+  }
+}
